@@ -1,0 +1,7 @@
+/home/Aida/bertozzi/didattica/visione2021/slides/simple2022/test/CMakeFiles/simple.dir
+/home/Aida/bertozzi/didattica/visione2021/slides/simple2022/test/CMakeFiles/edit_cache.dir
+/home/Aida/bertozzi/didattica/visione2021/slides/simple2022/test/CMakeFiles/rebuild_cache.dir
+/home/Aida/bertozzi/didattica/visione2021/slides/simple2022/test/CMakeFiles/list_install_components.dir
+/home/Aida/bertozzi/didattica/visione2021/slides/simple2022/test/CMakeFiles/install.dir
+/home/Aida/bertozzi/didattica/visione2021/slides/simple2022/test/CMakeFiles/install/local.dir
+/home/Aida/bertozzi/didattica/visione2021/slides/simple2022/test/CMakeFiles/install/strip.dir
