@@ -109,14 +109,14 @@ int main(int argc, char **argv)
 
 bool ParseInputs(ArgumentList& args, int argc, char **argv);
 
-#if 0
+#if NATIVE_OPTS
 bool ParseInputs(ArgumentList& args, int argc, char **argv) {
   args.wait_t=0;
 
   cv::CommandLineParser parser(argc, argv,
-      "{input   i|in.png|input image, Use %0xd format for multiple images.}"
-      "{wait    t|0     |wait before next frame (ms)}"
-      "{help    h|<none>|produce help message}"
+      "{input   i|../images/Lenna.png|input image, Use %0xd format for multiple images.}"
+      "{wait    t|0                  |wait before next frame (ms)}"
+      "{help    h|<none>             |produce help message}"
       );
 
   if(parser.has("help"))

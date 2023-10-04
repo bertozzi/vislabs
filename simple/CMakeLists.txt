@@ -4,6 +4,7 @@ project(simple)
 find_package(OpenCV REQUIRED)
 
 add_definitions("-std=c++11 -g")
+#add_definitions("-DNATIVE_OPTS")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -g")
 
 add_executable(simple simple.cpp)
