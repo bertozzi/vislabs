@@ -68,7 +68,7 @@ int main(int argc, char **argv)
     /////////////////////
 
     //display image
-    cv::namedWindow("original image", cv::WINDOW_NORMAL);
+    cv::namedWindow("original image", cv::WINDOW_NORMAL); // cv::WINDOW_AUTOSIZE if you want the window to adapt to image size
     cv::imshow("original image", image);
 
     //wait for key or timeout
