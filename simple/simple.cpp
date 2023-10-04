@@ -110,6 +110,7 @@ int main(int argc, char **argv)
 bool ParseInputs(ArgumentList& args, int argc, char **argv);
 
 #if NATIVE_OPTS
+// cumbersome, it requires to use "=" for args, i.e. -i=../images/Lenna.pgm
 bool ParseInputs(ArgumentList& args, int argc, char **argv) {
   args.wait_t=0;
 
@@ -130,6 +131,7 @@ bool ParseInputs(ArgumentList& args, int argc, char **argv) {
 
   return true;
 }
+
 #else
 
 #include <unistd.h>
