@@ -137,6 +137,7 @@ bool ParseInputs(ArgumentList& args, int argc, char **argv) {
 #include <unistd.h>
 bool ParseInputs(ArgumentList& args, int argc, char **argv) {
   int c;
+  args.wait_t = 0;
 
   while ((c = getopt (argc, argv, "hi:t:")) != -1)
     switch (c)
