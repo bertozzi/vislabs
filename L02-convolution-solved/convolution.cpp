@@ -106,7 +106,7 @@ int main(int argc, char **argv)
     float *magn = (float *)g.data;
     for(int i=0; i<gx.rows*gx.cols; ++i)
       dest[i] = magn[i]>50 ? atan2f(srcy[i], srcx[i]) + 2*CV_PI: 0;
-    // scale on 0-255 range
+    // scale on 0-255 range (without the scale factor we are going to have saturation) 
     cv::convertScaleAbs(gx, agx);
     cv::convertScaleAbs(gy, agy);
     cv::convertScaleAbs(g, ag);
