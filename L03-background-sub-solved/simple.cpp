@@ -1,3 +1,4 @@
+// THIS CODE MOSTLY USE A DIRECT data[] access and not specific OpenCV shortcuts
 //OpenCV
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
