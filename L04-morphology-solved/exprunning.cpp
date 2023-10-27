@@ -121,7 +121,7 @@ int main(int argc, char **argv)
       image.convertTo(fg, CV_16SC1);
       m_pframe_bg.convertTo(bg, CV_16SC1);
 
-      //cv::threshold(cv::abs(fg-bg), fg, threshold, 255, cv::THRESH_TOZERO);
+      //cv::threshold(cv::abs(fg-bg), fg, args.threshold, 255, cv::THRESH_TOZERO);
       //fg.convertTo(fg, CV_8UC1);
 
       cv::Mat sub = cv::abs(fg-bg);
