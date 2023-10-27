@@ -423,15 +423,24 @@ void label(const cv::Mat &in, cv::Mat &out)
   // SECOND PASS
   // I need to associate same labels
   // given the way I created it, maybe we need more than a single lookup...
-  for(int r = 0; r < in.rows; ++r)
+  bool swapped;
+  do
   {
-    for(int c = 0; c < in.cols; ++c)
+    swapped = false;
+    for(int r = 0; r < in.rows; ++r)
     {
+      for(int c = 0; c < in.cols; ++c)
+      {
 	uint16_t &plabel  = labels_data[(c + r*in.cols)];
 	while( (it = same_labels.find(plabel)) != same_labels.end())
+	{
+	  swapped = true;
 	  plabel = it->second;
+	}
+      }
     }
   }
+  while(swapped);
 
   out = labels;
 
