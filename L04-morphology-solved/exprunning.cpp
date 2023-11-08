@@ -131,9 +131,8 @@ int main(int argc, char **argv)
       binarize(sub, bin, args.threshold);
 
       cv::Mat out;
-      cv::Mat krn(3,3,CV_8UC1,cv::Scalar(255));
-      aperture(bin, krn, cv::Point2i(1,1), out);
-      cv::imwrite("bin.pgm", out);
+      cv::Mat se(3,3,CV_8UC1,cv::Scalar(255));
+      aperture(bin, se, cv::Point2i(1,1), out);
 
       cv::Mat labels;
       label(out, labels);
@@ -360,7 +359,7 @@ void label(const cv::Mat &in, cv::Mat &out)
   uint16_t *labels_data = (uint16_t *)labels.data; // more confortable than direct access + cast
   uint16_t label = 5; // initial label
 
-    // FIRST PASS
+  // FIRST PASS
 
   // 1st pixel
   labels_data[0] = label;
