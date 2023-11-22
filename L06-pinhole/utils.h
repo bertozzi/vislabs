@@ -44,6 +44,9 @@ void LoadPoints(const std::string& filename, std::vector< cv::Point3f >& points)
     file.close();
 }
 
+
+
+
 void PoseToAffine(float rx, float ry, float rz, float tx, float ty, float tz, cv::Affine3f& affine)
 {
     cv::Mat world_RvecX_cam = cv::Mat(1,3,CV_32F);
@@ -51,30 +54,38 @@ void PoseToAffine(float rx, float ry, float rz, float tx, float ty, float tz, cv
     world_RvecX_cam.at<float>(0,1) = 0.0;
     world_RvecX_cam.at<float>(0,2) = 0.0;
     cv::Mat world_Rx_cam;
-    cv::Rodrigues(world_RvecX_cam, world_Rx_cam);
+    cv::Rodrigues(world_RvecX_cam, world_Rx_cam); // Converts a rotation matrix to a rotation vector or vice versa. 
+
+/*
+void cv::Rodrigues  (  
+  InputArray   src,
+  OutputArray   dst,
+  OutputArray   jacobian = noArray()  // 3x9 o or 9x3, which is a matrix of partial derivatives of the output array components with respect to the input array components.
+ )   
+*/
     
     cv::Mat world_RvecY_cam = cv::Mat(1,3,CV_32F);
     world_RvecY_cam.at<float>(0,0) = 0.0;
     world_RvecY_cam.at<float>(0,1) = ry;
     world_RvecY_cam.at<float>(0,2) = 0.0;
     cv::Mat world_Ry_cam;
-    cv::Rodrigues(world_RvecY_cam, world_Ry_cam);
+    cv::Rodrigues(world_RvecY_cam, world_Ry_cam); // Converts a rotation matrix to a rotation vector or vice versa.
     
     cv::Mat world_RvecZ_cam = cv::Mat(1,3,CV_32F);
     world_RvecZ_cam.at<float>(0,0) = 0.0;
     world_RvecZ_cam.at<float>(0,1) = 0.0;
     world_RvecZ_cam.at<float>(0,2) = rz;
     cv::Mat world_Rz_cam;
-    cv::Rodrigues(world_RvecZ_cam, world_Rz_cam);
+    cv::Rodrigues(world_RvecZ_cam, world_Rz_cam); // Converts a rotation matrix to a rotation vector or vice versa.
     
-    cv::Mat world_R_cam = world_Rx_cam*world_Ry_cam*world_Rz_cam;
+    cv::Mat world_R_cam = world_Rx_cam*world_Ry_cam*world_Rz_cam; // Multiplication order is important (it depends on how the rotation is built)
     
     cv::Mat world_t_cam = cv::Mat(1,3,CV_32F);
     world_t_cam.at<float>(0,0) = tx;
     world_t_cam.at<float>(0,1) = ty;
     world_t_cam.at<float>(0,2) = tz;
     
-    affine = cv::Affine3f(world_R_cam, world_t_cam);
+    affine = cv::Affine3f(world_R_cam, world_t_cam); // constructor, Affine transform. It represents a 4x4 homogeneous transformation matrix T
 }
 
 void LoadCameraParams(const std::string& filename, CameraParams& params)
