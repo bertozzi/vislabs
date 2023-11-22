@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
   }
 
   // load point cloud from file
-  std::vector<Point3f> points;
+  std::vector<cv::Point3f> points;
   LoadPoints(argv[1], points);
 
   // load camera params from file
@@ -135,8 +135,11 @@ int main(int argc, char **argv) {
 
 void Project(const std::vector< Point3f >& points, const CameraParams& params, std::vector< Point2f >& uv_points)
 {
+  Affine3f RT_inv = params.RT.inv(); // attenzione: nei parametri di calibrazione c'e' orientazione e posizione della camera rispetto al mondo, quindi la RT che otteniamo a partire da quelli punti camera in punti mondo
+
+  // inv() non fa una vera inversa ma inverte la trasformazione (ci pensa opencv), risultato 3x4
+
   Eigen::Matrix<float, 4, 4> RT;
-  Affine3f RT_inv = params.RT.inv();
   RT << RT_inv.matrix(0,0), RT_inv.matrix(0,1), RT_inv.matrix(0,2), RT_inv.matrix(0,3), 
      RT_inv.matrix(1,0), RT_inv.matrix(1,1), RT_inv.matrix(1,2), RT_inv.matrix(1,3), 
      RT_inv.matrix(2,0), RT_inv.matrix(2,1), RT_inv.matrix(2,2), RT_inv.matrix(2,3),
