@@ -32,7 +32,6 @@ bool ParseInputs(ArgumentList& args, int argc, char **argv) {
   args.alpha=0.5;
   args.threshold=50;
 
-
   while ((c = getopt (argc, argv, "hi:t:a:k:")) != -1)
     switch (c)
     {

@@ -85,7 +85,7 @@ void cv::Rodrigues  (
     world_t_cam.at<float>(0,1) = ty;
     world_t_cam.at<float>(0,2) = tz;
     
-    affine = cv::Affine3f(world_R_cam, world_t_cam); // constructor, Affine transform. It represents a 4x4 homogeneous transformation matrix T
+    affine = cv::Affine3f(world_R_cam, world_t_cam); // costruttore, Affine transform. It represents a 4x4 homogeneous transformation matrix T
 }
 
 void LoadCameraParams(const std::string& filename, CameraParams& params)

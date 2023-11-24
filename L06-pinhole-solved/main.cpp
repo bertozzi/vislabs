@@ -36,11 +36,11 @@ int main(int argc, char **argv) {
   CameraParams params;
   LoadCameraParams(argv[2], params);
 
-  // 3d visualization
 #ifdef USE_OPENCVVIZ
   cv::Mat cloud;
   PointsToMat(points, cloud);
 
+  // 3d visualization
   cv::viz::Viz3d win = Viz3D(params);
 
   win.showWidget("cloud", cv::viz::WCloud(cloud));
@@ -52,10 +52,6 @@ int main(int argc, char **argv) {
   // project 3d points on image
   std::vector<Point2f> uv_points;
 
-  /**
-   * YOUR CODE HERE: completare la funzione Project
-   *
-   **/
   Project(points, params, uv_points);
 
   // draw image
@@ -69,8 +65,8 @@ int main(int argc, char **argv) {
 
   // rotazione intorno all'edificio
   //
-  // Provare ad implementare un loop di 8 posizioni sul piano XZ equidistanti dal baricentro dell'edificio, raggio 30m.
-  // Per mantenere l'edificio al centro della visuale dobbiamo ruotare l'orientazione della camera di 45 gradi (2*M_PI/8) ad ogni step
+  // Provare ad implementare un loop di 16 posizioni sul piano XZ equidistanti dal baricentro dell'edificio, raggio 30m.
+  // Per mantenere l'edificio al centro della visuale dobbiamo ruotare l'orientazione della camera di (2*M_PI/16) ad ogni step
   //
   //
   // centro del palazzo sul piano XZ, Y costante
@@ -112,6 +108,18 @@ int main(int argc, char **argv) {
      * void PoseToAffine(float rx, float ry, float rz, float tx, float ty, float tz, cv::Affine3f& affine)
      */
 
+    float rx, ry, rz, tx, ty, tz;
+
+    tx = bx - sin(angle)*radius;
+    ty = by; //non modifichiamo l'altezza
+    tz = bz - cos(angle)*radius;
+
+    rx = 0;      //nessuna rotazione intorno a X
+    ry = angle;  //rotazione intorno ad Y per orientarci verso l'edificio
+    rz = 0;      //nessuna rotazione intorno a Z
+
+    PoseToAffine(rx, ry ,rz, tx, ty, tz, params.RT);
+
     // project 3d points on image
     uv_points.clear();
     Project(points, params, uv_points);
@@ -147,13 +155,33 @@ void Project(const std::vector< Point3f >& points, const CameraParams& params, s
 
   Eigen::Matrix<float, 3, 4> K;
   K << params.ku,         0, params.u0, 0,
-    0, params.kv, params.v0, 0,
-    0,         0,         1, 0;
+               0, params.kv, params.v0, 0,
+               0,         0,         1, 0;
 
   /**
    * YOUR CODE HERE: project points from 3D to 2D
    * hint: p' = K*RT*P'
    */
+
+  // size of world points projection onto image plane
+  uv_points.resize(points.size());
+
+  // for each point compute the projection 
+  // we use Eigen and therefore we also must convert from cv::Point3f to eigen vector4f
+  for (unsigned int i = 0; i < points.size(); ++i)
+  {
+    Eigen::Vector4f point;
+    point.x() = points[i].x;
+    point.y() = points[i].y;
+    point.z() = points[i].z;
+    point.w() = 1.0;
+
+    Eigen::Vector3f uv_point;
+    uv_point = K * RT * point; // remember that formula?
+
+    uv_points[i].x = uv_point.x() / uv_point.z(); // back to cv::Point2f
+    uv_points[i].y = uv_point.y() / uv_point.z();
+  }
 }
 
 
