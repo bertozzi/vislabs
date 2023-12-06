@@ -126,7 +126,7 @@ int main(int argc, char **argv)
 
     // Add results to images
     cv::Mat harris_output, sift_output, surf_output, orb_output;
-    cv::drawKeypoints(image, sift_keypoints, sift_output);
+    cv::drawKeypoints(image, sift_keypoints, sift_output, cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
     cv::drawKeypoints(image, surf_keypoints, surf_output);
     cv::drawKeypoints(image, orb_keypoints, orb_output);
     cv::drawKeypoints(image, harris_keypoints, harris_output);
