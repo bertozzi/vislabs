@@ -63,35 +63,15 @@ int main(int argc, char **argv)
       " the type is " << image.type() <<
       " the pixel size is " << image.elemSize() <<
       " and each channel is " << image.elemSize1() << (image.elemSize1()>1?" bytes":" byte") << std::endl;
-#if 0
-    std::vector<cv::Mat> bgr;
-    cv::split(image, bgr);
-    cv::Mat img_data =cv::Mat::zeros(image.cols*image.rows, 3, CV_32F);
-    for(int i=0; i<image.cols*image.rows; i++) {
-        //img_data.at<float>(i,0) = (i/image.cols) / float(image.rows);
-        //img_data.at<float>(i,1) = (i%image.cols) / float(image.cols);
-        img_data.at<float>(i,0) = bgr[0].data[i] / 255.0;
-        img_data.at<float>(i,1) = bgr[1].data[i] / 255.0;
-        img_data.at<float>(i,2) = bgr[2].data[i] / 255.0;
-    }
-#endif
 
     std::vector<cv::Vec6f> img_data;
     for (int r = 0; r < image.rows; r++) {
       for (int c = 0; c < image.cols; c++) {
 	cv::Vec3f pixel = image.at<cv::Vec3f>(r, c);
 	img_data.push_back(cv::Vec6f(pixel[0], pixel[1], pixel[2], float(c)/image.cols*255, float(r)/image.rows*255, 0));
-	std::cout << pixel[0] << " ";
+	//std::cout << pixel[0] << " ";
       }
     }
-
-#if 0
-    std::cout << "The reshaped image has " << img_data.channels() << 
-      " channels, the size is " << img_data.rows << "x" << img_data.cols << " (" << img_data.total() << ") pixels " <<
-      " the type is " << img_data.type() <<
-      " the pixel size is " << img_data.elemSize() <<
-      " and each channel is " << img_data.elemSize1() << (img_data.elemSize1()>1?" bytes":" byte") << std::endl;
-#endif
 
     cv::TermCriteria criteria(cv::TermCriteria::EPS  + cv::TermCriteria::MAX_ITER, 10, 1.0);
     cv::Mat labels, centers;
@@ -108,28 +88,59 @@ int main(int argc, char **argv)
 	);
 
     std::cout << "Compactness: " << compactness << std::endl;
-    std::cout << "Centers size: " << centers.rows << "x" << centers.cols << "\n" << centers << std::endl;
+    std::cout << "Centers size: " << centers.rows << "x" << centers.cols << " channels: " << centers.channels() << std::endl;
     std::cout << "Labels size: " << labels.rows << "x" << labels.cols << " " << labels.channels() << " channel and type " << labels.type() <<  std::endl; // type 4 -> 32S
 
     // we repaint the original images assigning for each pixel
     // the same color value of the center of the group
+    cv::Mat image2(orig_image.size(), orig_image.type());
+    cv::Mat out_image(orig_image.size(), orig_image.type());
+    cv::Scalar colorTab[] =
+    {
+      cv::Scalar(0, 0, 255),
+      cv::Scalar(0,255,0),
+      cv::Scalar(255,0,0),
+      cv::Scalar(255,0,255),
+      cv::Scalar(0,255,255),
+      cv::Scalar(255,255,0),
+      cv::Scalar(255,255,255),
+      cv::Scalar(128,0,0),
+      cv::Scalar(0,128,0),
+      cv::Scalar(0,0,128),
+      cv::Scalar(128,0,128),
+      cv::Scalar(0,128,128),
+      cv::Scalar(128,128,128)
+    };
     int *labels_data      = (int32_t *)labels.data;
-    uint8_t *image_data   = (uint8_t *)orig_image.data;
+    uint8_t *image_data   = (uint8_t *)out_image.data;
+    uint8_t *image2_data   = (uint8_t *)image2.data;
     float *centroids_data = (float *)centers.data;
     for(int r=0; r<orig_image.rows; ++r)
       for(int c=0; c<orig_image.cols; ++c)
       {
 	int label = labels_data[r*image.cols + c];
-	image_data[(r*image.cols + c)*3 + 0] = centroids_data[label*3 + 0];
-	image_data[(r*image.cols + c)*3 + 1] = centroids_data[label*3 + 1];
-	image_data[(r*image.cols + c)*3 + 2] = centroids_data[label*3 + 2];
+
+	image_data[(r*image.cols + c)*3 + 0] = centroids_data[label*centers.cols + 0];
+	image_data[(r*image.cols + c)*3 + 1] = centroids_data[label*centers.cols + 1];
+	image_data[(r*image.cols + c)*3 + 2] = centroids_data[label*centers.cols + 2];
+
+	image2_data[(r*image.cols + c)*3 + 0] = colorTab[label%13][0];
+	image2_data[(r*image.cols + c)*3 + 1] = colorTab[label%13][1];
+	image2_data[(r*image.cols + c)*3 + 2] = colorTab[label%13][2];
       }
 
 
 
     //display image
-    cv::namedWindow("original image", cv::WINDOW_NORMAL); // cv::WINDOW_AUTOSIZE if you want the window to adapt to image size
-    cv::imshow("original image", orig_image);
+    cv::namedWindow("input image", cv::WINDOW_NORMAL); // cv::WINDOW_AUTOSIZE if you want the window to adapt to image size
+    cv::imshow("input image", orig_image);
+
+    cv::namedWindow("clustered image", cv::WINDOW_NORMAL); // cv::WINDOW_AUTOSIZE if you want the window to adapt to image size
+    cv::imshow("clustered image", out_image);
+
+    cv::namedWindow("clustered image (paletted)", cv::WINDOW_NORMAL); 
+    cv::imshow("clustered image (paletted)", image2);
+
 
     //wait for key or timeout
     unsigned char key = cv::waitKey(args.wait_t);
