@@ -54,7 +54,7 @@ bool ParseInputs(ArgumentList& args, int argc, char **argv) {
 	  "   -h                         produce help message"<<std::endl<<
 	  "   -i arg                   image name. Use %0xd format for multiple images."<<std::endl<<
 	  "   -w arg                   running average window (default 10)"<<std::endl<<
-	  "   -k arg                   threshold value (default 50)"<<std::endl<<
+	  "   -k arg                   threshold value (default 0 AKA Ostsu)"<<std::endl<<
 	  "   -t arg                   wait before next frame (ms) [default = 0]"<<std::endl<<std::endl<<std::endl;
 	return false;
     }

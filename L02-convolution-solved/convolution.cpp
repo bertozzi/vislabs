@@ -228,7 +228,7 @@ void addPadding(const cv::Mat image, cv::Mat &out, int vPadding, int hPadding){
 void myfilter2D(const cv::Mat& src, const cv::Mat& krn, cv::Mat& out, int stride)
 {
 
-  if(!src.rows%2 || !src.cols%2)
+  if(!krn.rows%2 || !krn.cols%2)
   {
     std::cerr << "myfilter2D(): ERROR krn has not odd size!" << std::endl;
     exit(1);
