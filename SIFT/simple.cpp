@@ -108,21 +108,25 @@ int main(int argc, char **argv)
     std::transform(corners.begin(), corners.end(), std::back_inserter(harris_keypoints), [](const cv::Point2f & p){ return cv::KeyPoint(p.x,p.y,3.0);} ); // applica funzione a range vector e memorizza in altro range 3->size del keypoint
 
 
+    std::cout << "DEBUG: the number of Harris Corners is " << corners.size() << std::endl;
 
     // SIFT
     cv::Ptr<cv::SiftFeatureDetector> sift_detector = cv::SiftFeatureDetector::create();
     sift_detector->detect(image, sift_keypoints);
+    std::cout << "DEBUG: the number of SIFT keypoints is " << sift_keypoints.size() << std::endl;
 
     // SURF
-    int minHessian = 400;
-    cv::Ptr<cv::xfeatures2d::SurfFeatureDetector> surf_detector = cv::xfeatures2d::SurfFeatureDetector::create(minHessian);
-    surf_detector->detect(image, surf_keypoints);
+    // int minHessian = 400;
+    // cv::Ptr<cv::xfeatures2d::SurfFeatureDetector> surf_detector = cv::xfeatures2d::SurfFeatureDetector::create(minHessian);
+    // surf_detector->detect(image, surf_keypoints);
+    // std::cout << "DEBUG: the number of SURF keypoints is " << surf_keypoints.size() << std::endl;
 
 
     // ORB
     cv::Ptr<cv::ORB> orb_detector = cv::ORB::create(sift_keypoints.size());
     orb_detector->setScoreType(cv::ORB::HARRIS_SCORE);
     orb_detector->detect(image, orb_keypoints);
+    std::cout << "DEBUG: the number of ORB keypoints is " << orb_keypoints.size() << std::endl;
 
     // Add results to images
     cv::Mat harris_output, sift_output, surf_output, orb_output;
@@ -147,8 +151,8 @@ int main(int argc, char **argv)
     cv::namedWindow("SIFT", cv::WINDOW_NORMAL);
     cv::imshow("SIFT", sift_output);
 
-    cv::namedWindow("SURF", cv::WINDOW_NORMAL);
-    cv::imshow("SURF", surf_output);
+    // cv::namedWindow("SURF", cv::WINDOW_NORMAL);
+    // cv::imshow("SURF", surf_output);
 
 
     //wait for key or timeout
