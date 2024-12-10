@@ -14,7 +14,8 @@
 #include <unistd.h>
 
 struct ArgumentList {
-  std::string image_name;		    //!< image file name
+  std::string left_image_name;		    //!< image file name
+  std::string right_image_name;		    //!< image file name
   int wait_t;                     //!< waiting time
   int orb_t;                     //!< n. features for ORB
 };
@@ -24,11 +25,14 @@ bool ParseInputs(ArgumentList& args, int argc, char **argv) {
   args.wait_t=0;
   args.orb_t=500;
 
-  while ((c = getopt (argc, argv, "hi:t:o:")) != -1)
+  while ((c = getopt (argc, argv, "hl:r:t:o:")) != -1)
     switch (c)
     {
-      case 'i':
-	args.image_name = optarg;
+      case 'r':
+	args.right_image_name = optarg;
+	break;
+      case 'l':
+	args.left_image_name = optarg;
 	break;
       case 't':
 	args.wait_t = atoi(optarg);
@@ -52,13 +56,14 @@ bool ParseInputs(ArgumentList& args, int argc, char **argv) {
 int main(int argc, char **argv)
 {
   int frame_number = 0;
-  char frame_name[256];
+  char lframe_name[256];
+  char rframe_name[256];
   bool exit_loop = false;
 
   std::cout<<"Simple program."<<std::endl;
 
   //////////////////////
-  //parse argument list:
+  //parse argument listd:
   //////////////////////
   ArgumentList args;
   if(!ParseInputs(args, argc, argv)) {
@@ -75,25 +80,38 @@ int main(int argc, char **argv)
     //generating file name
     //
     //multi frame case
-    if(args.image_name.find('%') != std::string::npos)
-      sprintf(frame_name,(const char*)(args.image_name.c_str()),frame_number);
+    if(args.left_image_name.find('%') != std::string::npos)
+      sprintf(lframe_name,(const char*)(args.left_image_name.c_str()),frame_number);
     else //single frame case
-      sprintf(frame_name,"%s",args.image_name.c_str());
+      sprintf(lframe_name,"%s",args.left_image_name.c_str());
+
+    //multi frame case
+    if(args.right_image_name.find('%') != std::string::npos)
+      sprintf(lframe_name,(const char*)(args.right_image_name.c_str()),frame_number);
+    else //single frame case
+      sprintf(rframe_name,"%s",args.right_image_name.c_str());
+
 
     //opening file
-    std::cout<<"Opening "<<frame_name<<std::endl;
+    std::cout<<"Opening " << lframe_name << " " << rframe_name << std::endl;
 
-    cv::Mat image = cv::imread(frame_name, CV_8UC1);
-    if(image.empty())
+    cv::Mat limage = cv::imread(lframe_name, CV_8UC1);
+    if(limage.empty())
     {
-      std::cout<<"Unable to open "<<frame_name<<std::endl;
+      std::cout << "Unable to open " << lframe_name << std::endl;
+      return 1;
+    }
+
+    cv::Mat rimage = cv::imread(rframe_name, CV_8UC1);
+    if(rimage.empty())
+    {
+      std::cout << "Unable to open " << rframe_name << std::endl;
       return 1;
     }
 
 
 
-
-    std::vector<cv::KeyPoint> sift_keypoints, surf_keypoints, orb_keypoints, harris_keypoints;
+    std::vector<cv::KeyPoint> rsift_keypoints, lsift_keypoints, surf_keypoints, orb_keypoints, harris_keypoints;
 
     // HARRIS
     std::vector<cv::Point2f> corners;
@@ -104,7 +122,7 @@ int main(int argc, char **argv)
     bool useHarrisDetector = true;
     double k = 0.04;
 
-    cv::goodFeaturesToTrack(image,corners,maxCorners,qualityLevel,minDistance,cv::noArray(),blockSize,useHarrisDetector,k ); 
+    cv::goodFeaturesToTrack(rimage,corners,maxCorners,qualityLevel,minDistance,cv::noArray(),blockSize,useHarrisDetector,k ); 
     std::transform(corners.begin(), corners.end(), std::back_inserter(harris_keypoints), [](const cv::Point2f & p){ return cv::KeyPoint(p.x,p.y,3.0);} ); // applica funzione a range vector e memorizza in altro range 3->size del keypoint
 
 
@@ -112,35 +130,82 @@ int main(int argc, char **argv)
 
     // SIFT
     cv::Ptr<cv::SiftFeatureDetector> sift_detector = cv::SiftFeatureDetector::create();
-    sift_detector->detect(image, sift_keypoints);
-    std::cout << "DEBUG: the number of SIFT keypoints is " << sift_keypoints.size() << std::endl;
+    sift_detector->detect(rimage, rsift_keypoints);
+    sift_detector->detect(limage, lsift_keypoints);
+    std::cout << "DEBUG: the number of SIFT keypoints in img 1 is " << rsift_keypoints.size() << std::endl;
+    std::cout << "DEBUG: the number of SIFT keypoints in img 2 is " << lsift_keypoints.size() << std::endl;
+
+
+    // compute SIFT descriptors
+    cv::Ptr<cv::SiftDescriptorExtractor> sift_extractor = cv::SiftDescriptorExtractor::create();
+    cv::Mat rdes, ldes;
+
+    sift_extractor->compute(rimage, rsift_keypoints, rdes);
+    sift_extractor->compute(limage, lsift_keypoints, ldes);
+
+    // compute matching
+    cv::FlannBasedMatcher matcher;
+    std::vector<cv::DMatch> sift_matches, sift_good_matches;
+
+    matcher.match(rdes, ldes, sift_matches);
+
+    double max_dist = 0; double min_dist = 1000;
+
+    // compute min and max distances
+    for( size_t i = 0; i < sift_matches.size(); i++ )
+    { 
+      double dist = sift_matches[i].distance;
+      if( dist < min_dist ) min_dist = dist;
+      if( dist > max_dist ) max_dist = dist;
+    }
+    printf("SIFT Max dist : %f \n", max_dist );
+    printf("SIFT Min dist : %f \n", min_dist );
+
+    // threshold matches 
+    for( size_t i = 0; i < sift_matches.size(); i++ )
+      if(sift_matches[i].distance <= std::max(min_dist * 2, .04))
+	sift_good_matches.push_back(sift_matches[i]);
+
+    // draw matches
+    cv::Mat sift_match_result;
+    cv::drawMatches(rimage, rsift_keypoints, limage, lsift_keypoints, sift_good_matches, sift_match_result); 
+
+    // show matches
+    cv::namedWindow("SIFT matches", cv::WINDOW_NORMAL);
+    cv::imshow("SIFT matches", sift_match_result);
+
+
+
 
     // SURF
     // int minHessian = 400;
     // cv::Ptr<cv::xfeatures2d::SurfFeatureDetector> surf_detector = cv::xfeatures2d::SurfFeatureDetector::create(minHessian);
-    // surf_detector->detect(image, surf_keypoints);
+    // surf_detector->detect(rimage, surf_keypoints);
     // std::cout << "DEBUG: the number of SURF keypoints is " << surf_keypoints.size() << std::endl;
 
 
     // ORB
-    cv::Ptr<cv::ORB> orb_detector = cv::ORB::create(sift_keypoints.size());
+    cv::Ptr<cv::ORB> orb_detector = cv::ORB::create(rsift_keypoints.size());
     orb_detector->setScoreType(cv::ORB::HARRIS_SCORE);
-    orb_detector->detect(image, orb_keypoints);
+    orb_detector->detect(rimage, orb_keypoints);
     std::cout << "DEBUG: the number of ORB keypoints is " << orb_keypoints.size() << std::endl;
 
-    // Add results to images
-    cv::Mat harris_output, sift_output, surf_output, orb_output;
-    cv::drawKeypoints(image, sift_keypoints, sift_output);
-    cv::drawKeypoints(image, surf_keypoints, surf_output);
-    cv::drawKeypoints(image, orb_keypoints, orb_output);
-    cv::drawKeypoints(image, harris_keypoints, harris_output);
+    // Add results to rimages
+    cv::Mat harris_output, rsift_output, lsift_output, surf_output, orb_output;
+    cv::drawKeypoints(rimage, rsift_keypoints, rsift_output);
+    cv::drawKeypoints(limage, lsift_keypoints, lsift_output);
+    cv::drawKeypoints(rimage, surf_keypoints, surf_output);
+    cv::drawKeypoints(rimage, orb_keypoints, orb_output);
+    cv::drawKeypoints(rimage, harris_keypoints, harris_output);
 
 
 
 
     //display image
-    cv::namedWindow("image", cv::WINDOW_NORMAL);
-    cv::imshow("image", image);
+    cv::namedWindow("image 1", cv::WINDOW_NORMAL);
+    cv::imshow("image 1", rimage);
+    cv::namedWindow("image 2", cv::WINDOW_NORMAL);
+    cv::imshow("image 2", limage);
 
     cv::namedWindow("Harris", cv::WINDOW_NORMAL);
     cv::imshow("Harris", harris_output);
@@ -148,8 +213,11 @@ int main(int argc, char **argv)
     cv::namedWindow("ORB", cv::WINDOW_NORMAL);
     cv::imshow("ORB", orb_output);
 
-    cv::namedWindow("SIFT", cv::WINDOW_NORMAL);
-    cv::imshow("SIFT", sift_output);
+    cv::namedWindow("SIFT 1", cv::WINDOW_NORMAL);
+    cv::imshow("SIFT 1", rsift_output);
+
+    cv::namedWindow("SIFT 2", cv::WINDOW_NORMAL);
+    cv::imshow("SIFT 2", lsift_output);
 
     // cv::namedWindow("SURF", cv::WINDOW_NORMAL);
     // cv::imshow("SURF", surf_output);
