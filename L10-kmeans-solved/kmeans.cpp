@@ -95,6 +95,7 @@ int main(int argc, char **argv)
     // the same color value of the center of the group
     cv::Mat image2(orig_image.size(), orig_image.type());
     cv::Mat out_image(orig_image.size(), orig_image.type());
+    // but also using the following palette
     cv::Scalar colorTab[] =
     {
       cv::Scalar(0, 0, 255),
@@ -111,10 +112,12 @@ int main(int argc, char **argv)
       cv::Scalar(0,128,128),
       cv::Scalar(128,128,128)
     };
-    int *labels_data      = (int32_t *)labels.data;
-    uint8_t *image_data   = (uint8_t *)out_image.data;
+
+    int *labels_data       = (int32_t *)labels.data;
+    uint8_t *image_data    = (uint8_t *)out_image.data;
     uint8_t *image2_data   = (uint8_t *)image2.data;
-    float *centroids_data = (float *)centers.data;
+    float *centroids_data  = (float *)centers.data;
+
     for(int r=0; r<orig_image.rows; ++r)
       for(int c=0; c<orig_image.cols; ++c)
       {
