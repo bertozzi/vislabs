@@ -88,7 +88,7 @@ int main(int argc, char **argv)
 	std::cout << "Mat = "<< std::endl << image << std::endl;
 	break;
       case 'q':
-	exit_loop = 1;
+	exit_loop = true;
 	break;
       case 'c':
 	std::cout << "SET COLOR imread()" << std::endl;
