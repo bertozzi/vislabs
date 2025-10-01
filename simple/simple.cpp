@@ -90,6 +90,10 @@ int main(int argc, char **argv)
       case 'q':
 	exit_loop = true;
 	break;
+      case 'a':
+	std::cout << "SET UNCHANGED imread()" << std::endl;
+	imreadflags = cv::IMREAD_UNCHANGED;
+	break;
       case 'c':
 	std::cout << "SET COLOR imread()" << std::endl;
 	imreadflags = cv::IMREAD_COLOR;
