@@ -92,11 +92,11 @@ int main(int argc, char **argv)
 	break;
       case 'a':
 	std::cout << "SET UNCHANGED imread()" << std::endl;
-	imreadflags = cv::IMREAD_UNCHANGED;
+	imreadflags = cv::IMREAD_UNCHANGED; // in such a case if  we have an alpha channel, we obtain 4 channels!
 	break;
       case 'c':
 	std::cout << "SET COLOR imread()" << std::endl;
-	imreadflags = cv::IMREAD_COLOR;
+	imreadflags = cv::IMREAD_COLOR;  // read RGB or, rather, BGR image
 	break;
       case 'g':
 	std::cout << "SET GREY  imread()" << std::endl;
