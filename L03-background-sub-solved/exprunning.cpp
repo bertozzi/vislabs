@@ -112,7 +112,9 @@ int main(int argc, char **argv)
       image.convertTo(fg, CV_16SC1);
       m_pframe_bg.convertTo(bg, CV_16SC1);
 
-      cv::threshold(cv::abs(fg-bg), fg, args.threshold, 255, cv::THRESH_TOZERO);
+      cv::threshold(cv::abs(fg-bg), fg, args.threshold, 255, cv::THRESH_TOZERO); // 255 is not used
+      // cv::threshold(cv::abs(fg-bg), fg, args.threshold, 255, cv::THRESH_BINARY); for pure binary images
+
       fg.convertTo(fg, CV_8UC1);
 
       cv::namedWindow("Exp Running-BG",cv::WINDOW_NORMAL);

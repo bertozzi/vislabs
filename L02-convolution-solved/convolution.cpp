@@ -234,7 +234,11 @@ void myfilter2D(const cv::Mat& src, const cv::Mat& krn, cv::Mat& out, int stride
     exit(1);
   }
 
-  int outsizey = (src.rows + (krn.rows/2)*2 - krn.rows)/(float)stride + 1;
+  // remember ther formula in 03 slides. nx = int((x + 2*p -f)/stride +1)
+  // where p is the padding, f is the kernel size, stride is the stride
+  // p can be easily obtained if you remember that C/C++ perform integer division when dealing with integer operands
+  // in our case krn.rows/2 is an integer and it is out p
+  int outsizey = (src.rows + (krn.rows/2)*2 - krn.rows)/(float)stride + 1; 
   int outsizex = (src.cols + (krn.cols/2)*2 - krn.cols)/(float)stride + 1;
   out = cv::Mat(outsizey, outsizex, CV_32SC1);
 
