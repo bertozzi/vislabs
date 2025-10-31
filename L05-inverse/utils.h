@@ -24,7 +24,7 @@ void PoseToAffine(float rx, float ry, float rz, float tx, float ty, float tz, cv
     world_RvecX_cam.at<float>(0,1) = 0.0;
     world_RvecX_cam.at<float>(0,2) = 0.0;
     cv::Mat world_Rx_cam;
-    cv::Rodrigues(world_RvecX_cam, world_Rx_cam);
+    cv::Rodrigues(world_RvecX_cam, world_Rx_cam); // function that converts a rotation matrix to a rotation vector, and vice versa
     
     cv::Mat world_RvecY_cam = cv::Mat(1,3,CV_32F);
     world_RvecY_cam.at<float>(0,0) = 0.0;
@@ -47,7 +47,7 @@ void PoseToAffine(float rx, float ry, float rz, float tx, float ty, float tz, cv
     world_t_cam.at<float>(0,1) = ty;
     world_t_cam.at<float>(0,2) = tz;
     
-    affine = cv::Affine3f(world_R_cam, world_t_cam);
+    affine = cv::Affine3f(world_R_cam, world_t_cam); // data matrice di rotazione e vettore di traslazione ci costruisce la matrice [RT]
 }
 
 void LoadCameraParams(const std::string& filename, CameraParams& params)

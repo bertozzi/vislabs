@@ -2,7 +2,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/calib3d.hpp>
 
-#define USE_OPENCVVIZ
+//#define USE_OPENCVVIZ
 
 #ifdef USE_OPENCVVIZ
 #include <opencv2/viz.hpp>
@@ -18,7 +18,7 @@ struct CameraParams
     float u0, v0;
 
     // estrinsics
-    cv::Affine3f RT;
+    cv::Affine3f RT; // 4x4 matrix
 };
 
 void LoadPoints(const std::string& filename, std::vector< cv::Point3f >& points)
@@ -85,7 +85,7 @@ void cv::Rodrigues  (
     world_t_cam.at<float>(0,1) = ty;
     world_t_cam.at<float>(0,2) = tz;
     
-    affine = cv::Affine3f(world_R_cam, world_t_cam); // constructor, Affine transform. It represents a 4x4 homogeneous transformation matrix T
+    affine = cv::Affine3f(world_R_cam, world_t_cam); // constructor, Affine transform. It represents a 4x4 homogeneous transformation matrix [RT]
 }
 
 void LoadCameraParams(const std::string& filename, CameraParams& params)

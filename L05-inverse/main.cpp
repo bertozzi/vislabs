@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
     
     if (argc < 3) 
     {
-        std::cerr << "Usage lab5_2 <image_filename> <camera_params_filename>" << std::endl; 
+        std::cerr << "Usage " << argv[0] << " <image_filename> <camera_params_filename>" << std::endl; 
         return 0;
     }
     

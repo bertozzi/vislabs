@@ -339,35 +339,36 @@ void GaussianBlur(const cv::Mat& src, float sigma, int r, cv::Mat& out, int stri
 // or float32
 void sobel3x3(const cv::Mat& src, cv::Mat& magn, cv::Mat& ori)
 {
-    // SOBEL FILTERING
-    // void cv::Sobel(InputArray src, OutputArray dst, int ddepth, int dx, int dy, int ksize = 3, double scale = 1, double delta = 0, int borderType = BORDER_DEFAULT)
-    //sobel verticale come trasposto dell'orizzontale
+  // SOBEL FILTERING
+  // void cv::Sobel(InputArray src, OutputArray dst, int ddepth, int dx, int dy, int ksize = 3, double scale = 1, double delta = 0, int borderType = BORDER_DEFAULT)
+  //sobel verticale come trasposto dell'orizzontale
 
   cv::Mat ix, iy;
-    cv::Mat h_sobel = (
-       cv::Mat_<float>(3, 3) <<  -1, 0, 1,
-	                         -2, 0, 2,
-	                         -1, 0, 1
+  cv::Mat h_sobel = (
+      cv::Mat_<float>(3, 3) <<  
+      -1, 0, 1,
+      -2, 0, 2,
+      -1, 0, 1
       );
 
-    cv::Mat v_sobel = h_sobel.t();
+  cv::Mat v_sobel = h_sobel.t();
 
-    myfilter2D(src, h_sobel, ix, 1, 1);
-    myfilter2D(src, v_sobel, iy, 1, 1);
-    ix.convertTo(ix, CV_32FC1);
-    iy.convertTo(iy, CV_32FC1);
+  myfilter2D(src, h_sobel, ix, 1, 1);
+  myfilter2D(src, v_sobel, iy, 1, 1);
+  ix.convertTo(ix, CV_32FC1);
+  iy.convertTo(iy, CV_32FC1);
 
-    // compute magnitude
-    cv::pow(ix.mul(ix) + iy.mul(iy), 0.5, magn);
-    // compute orientation
-    ori = cv::Mat(src.size(), CV_32FC1);
-    float *dest = (float *)ori.data;
-    float *srcx = (float *)ix.data;
-    float *srcy = (float *)iy.data;
+  // compute magnitude
+  cv::pow(ix.mul(ix) + iy.mul(iy), 0.5, magn);
+  // compute orientation
+  ori = cv::Mat(src.size(), CV_32FC1);
+  float *dest = (float *)ori.data;
+  float *srcx = (float *)ix.data;
+  float *srcy = (float *)iy.data;
 
-    for(int i=0; i<ix.rows*ix.cols; ++i)
-      dest[i] = atan2f(srcy[i], srcx[i]) + 2*CV_PI;
- }
+  for(int i=0; i<ix.rows*ix.cols; ++i)
+    dest[i] = atan2f(srcy[i], srcx[i]) + 2*CV_PI;
+}
 
 template <typename T>
 float bilinear(const cv::Mat& src, float r, float c){

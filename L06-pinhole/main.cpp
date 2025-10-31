@@ -6,13 +6,15 @@
 #include <opencv2/core/types.hpp>
 #include <opencv2/highgui.hpp>
 
-// eigen
+// eigen. to install: git clone https://gitlab.com/libeigen/eigen.git
 #include <eigen3/Eigen/Core>
 
 // utils
 #include "utils.h"
 
+
 using namespace cv;
+
 
 void Project(const std::vector<cv::Point3f>& points, const CameraParams& params, std::vector<cv::Point2f>& uv_points);
 
@@ -24,7 +26,7 @@ int main(int argc, char **argv) {
 
   if (argc < 3) 
   {
-    std::cerr << "Usage lab5_1 <points_filename> <camera_params_filename>" << std::endl;
+    std::cerr << "Usage " << argv[0] << " <points_filename> <camera_params_filename>" << std::endl;
     return 0;
   }
 
@@ -133,7 +135,7 @@ int main(int argc, char **argv) {
 }
 
 
-void Project(const std::vector< Point3f >& points, const CameraParams& params, std::vector< Point2f >& uv_points)
+void Project(const std::vector<cv::Point3f>& points, const CameraParams& params, std::vector< Point2f >& uv_points)
 {
   Affine3f RT_inv = params.RT.inv(); // attenzione: nei parametri di calibrazione c'e' orientazione e posizione della camera rispetto al mondo, quindi la RT che otteniamo a partire da quelli punti camera in punti mondo
 
