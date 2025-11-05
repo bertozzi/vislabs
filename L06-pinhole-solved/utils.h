@@ -18,7 +18,7 @@ struct CameraParams
     float u0, v0;
 
     // estrinsics
-    cv::Affine3f RT;
+    cv::Affine3f RT; // 4x4 matrix
 };
 
 void LoadPoints(const std::string& filename, std::vector< cv::Point3f >& points)
