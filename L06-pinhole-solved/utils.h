@@ -2,7 +2,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/calib3d.hpp>
 
-#define USE_OPENCVVIZ
+//#define USE_OPENCVVIZ
 
 #ifdef USE_OPENCVVIZ
 #include <opencv2/viz.hpp>
