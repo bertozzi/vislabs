@@ -377,10 +377,10 @@ float bilinear(const cv::Mat& src, float r, float c){
   float xDist = c - static_cast<long>(c);
 
   float value =
-    src.at<T>(r,c)*(1-yDist)*(1-xDist) +
-    src.at<T>(r+1,c)*(yDist)*(1-xDist) +
-    src.at<T>(r,c+1)*(1-yDist)*(xDist) +
-    src.at<T>(r+1,c+1)*yDist*xDist;
+    src.at<T>(r,c)     * (1-yDist)*(1-xDist) +
+    src.at<T>(r+1,c)   * (yDist)*(1-xDist) +
+    src.at<T>(r,c+1)   * (1-yDist)*(xDist) +
+    src.at<T>(r+1,c+1) * yDist*xDist;
 
   return value;
 }

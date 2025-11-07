@@ -2,7 +2,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/calib3d.hpp>
 
-//#define USE_OPENCVVIZ
+#define USE_OPENCVVIZ
 
 #ifdef USE_OPENCVVIZ
 #include <opencv2/viz.hpp>
@@ -29,10 +29,10 @@ void LoadPoints(const std::string& filename, std::vector< cv::Point3f >& points)
     int size;
     file >> size;
     
-    for (unsigned int i = 0; i < size; ++i) 
+    cv::Point3f point;
+    while(file >> point.x >> point.y >> point.z)
     {
-        cv::Point3f point, point_out;
-        file >> point.x >> point.y >> point.z;
+       cv::Point3f point_out;
 
         //from "VisLab-body-like" to typical "camera-like" reference
         point_out.z = point.x;
@@ -40,7 +40,15 @@ void LoadPoints(const std::string& filename, std::vector< cv::Point3f >& points)
         point_out.x = -point.y;
         points.push_back(point_out);
     }
+
+    if(points.size() < 10)
+    {
+      std::cerr << "ERROR: too few points read from " << filename << " file (" << points.size() << ")" << std::endl;
+      exit(EXIT_FAILURE);
+    }
     
+    std::cout << "Read " << points.size() << " points data from " << filename << " file" << std::endl;
+
     file.close();
 }
 
