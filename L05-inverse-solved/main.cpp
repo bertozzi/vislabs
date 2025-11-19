@@ -129,6 +129,7 @@ int main(int argc, char **argv) {
 
       // applico un fattore di scala k (altrimenti la parte di piano che prendo ha le dimensioni del sensore immagine...)
       // aggiusto anche le coordinate di modo che sia centrato nell'immagine e con il giusto verso dell'asse verticale
+      // esempio (guardare lo schema sopra): il punto di coordinate X Y => (0,0) nell'immagine ha coordinate (rows, cols/2)
       int X = proj.x()/proj.z()*k + sparse_ipm.cols/2.0;
       int Z = sparse_ipm.rows - proj.y()/proj.z()*k;
       if( X >=0 && X < sparse_ipm.cols && Z >=0 && Z < sparse_ipm.rows)
