@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
           M(1,0), M(1,2), M(1,3),
           M(2,0), M(2,2), M(2,3);
 
-  // tmp e' quindi la matrice che porta da (X,Z,1) a (u,v,w), ed e' quella che dobbiamo invertire per fare il percorso contrario
+  // M_r e' quindi la matrice che porta da (X,Z,1) a (u,v,w), ed e' quella che dobbiamo invertire per fare il percorso contrario
   // (u,v,1) -> (X,Z,W)
   Eigen::Matrix3f IPM;
   IPM = M_r.inverse();
@@ -119,6 +119,7 @@ int main(int argc, char **argv) {
   // in questo caso parto dall'immagine e calcolo, grazie alla matrice inversa della  M a cui avevo tolto una colonna
   // il punto del piano Y=0 che da' origine a quel pixel
   // ha il difetto che punti immagine contingui potranno finire in punti mondo con Y=0 non contigui, lasciando di conseguenza dei "buchi" nell'immagine generata
+  // o, viceversa, che punti diversi siano proiettati nello stesso punto destinazione (scarsa efficienza)
 
   for(int ii = 0; ii < input.rows; ii++)
   {
