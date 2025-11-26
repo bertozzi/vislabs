@@ -87,7 +87,8 @@ void mySAD_Disparity7x7(const cv::Mat &left_image, const cv::Mat &right_image, c
 	  }
 	}
       }
-      if(min_sum_first*.95 >= min_sum_2nd)
+      // questo avevo detto di non farlo...
+      if(min_sum_2nd*.95 <= min_sum_first)
 	out.at<float>(r,c) = 0;
       else
 	out.at<float>(r,c) = disp;
