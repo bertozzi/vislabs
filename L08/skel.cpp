@@ -119,27 +119,33 @@ bool ParseInputs(ArgumentList& args, int argc, char **argv) {
     switch (c)
     {
       case 'd':
-        args.dist_t = atoi(optarg);
-        break;
+	args.dist_t = atoi(optarg);
+	break;
       case 't':
-        args.wait_t = atoi(optarg);
-        break;
+	args.wait_t = atoi(optarg);
+	break;
       case 'p':
-        args.points_name = optarg;
-        break;
+	args.points_name = optarg;
+	break;
       case 'i':
-        args.image_name = optarg;
-        break;
+	args.image_name = optarg;
+	break;
       case 'h':
       default:
-        std::cout<<"Allowed options:"<<std::endl<<
-          "   -h                       produce help message"<<std::endl<<
-          "   -i arg                   image name. Use %0xd format for multiple images."<<std::endl<<
-          "   -p arg                   points file name. "<<std::endl<<
-          "   -d arg                   RANSAC distance (default 30)"<<std::endl<<
-          "   -t arg                   wait before next frame (ms)"<<std::endl<<std::endl;
-        return false;
+	std::cout<<"Allowed options:"<<std::endl<<
+	  "   -h                       produce help message"<<std::endl<<
+	  "   -i arg                   image name. Use %0xd format for multiple images."<<std::endl<<
+	  "   -p arg                   points file name. "<<std::endl<<
+	  "   -d arg                   RANSAC distance (default 30)"<<std::endl<<
+	  "   -t arg                   wait before next frame (ms)"<<std::endl<<std::endl;
+	return false;
     }
+  if(args.points_name.empty() or args.image_name.empty())
+  {
+    std::cerr << "Missing image file name or points file name" << std::endl;
+    exit(1);
+  }
+
   return true;
 }
 
