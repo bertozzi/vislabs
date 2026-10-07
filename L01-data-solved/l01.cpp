@@ -400,9 +400,9 @@ int main(int argc, char **argv)
 	    if(args.image_name.find("RGGB")!=std::string::npos)
 	    {
 	      //ES11
-	      out_color_down1.data[(r*out_gray_down.cols+c)]     = upperleft;
-	      out_color_down1.data[(r*out_gray_down.cols+c)+1]   = (upperright+lowerleft)/2;
-	      out_color_down1.data[(r*out_gray_down.cols+c)+2]   = lowerright;
+	      out_color_down1.data[(r*out_color_down1.cols+c)*3]   = lowerright;
+	      out_color_down1.data[(r*out_color_down1.cols+c)*3+1] = (upperright+lowerleft)/2;
+	      out_color_down1.data[(r*out_color_down1.cols+c)*3+2] = upperleft;
 	      //ES12
 	      out_gray_down.data[(r*out_gray_down.cols+c)] = 0.3*float(upperleft) + 0.59*float(upperright+lowerleft)/2.0 + 0.11*float(lowerright);
 	    }
@@ -410,9 +410,9 @@ int main(int argc, char **argv)
 	    if(args.image_name.find("GBRG")!=std::string::npos)
 	    {
 	      //ES11
-	      out_color_down1.data[(r*out_gray_down.cols+c)]     = upperright;
-	      out_color_down1.data[(r*out_gray_down.cols+c)+1]   = (upperleft+lowerright)/2;
-	      out_color_down1.data[(r*out_gray_down.cols+c)+2]   = lowerleft;
+	      out_color_down1.data[(r*out_color_down1.cols+c)*3]   = upperright;
+	      out_color_down1.data[(r*out_color_down1.cols+c)*3+1] = (upperleft+lowerright)/2;
+	      out_color_down1.data[(r*out_color_down1.cols+c)*3+2] = lowerleft;
 	      //ES12
 	      out_gray_down.data[(r*out_gray_down.cols+c)] = 0.3*float(lowerleft) + 0.59*float(upperleft+lowerright)/2.0 + 0.11*float(upperright);
 	    }
@@ -420,9 +420,9 @@ int main(int argc, char **argv)
 	    if(args.image_name.find("BGGR")!=std::string::npos)
 	    {
 	      //ES11
-	      out_color_down1.data[(r*out_gray_down.cols+c)]     = lowerright;
-	      out_color_down1.data[(r*out_gray_down.cols+c)+1]   = (upperright+lowerleft)/2;
-	      out_color_down1.data[(r*out_gray_down.cols+c)+2]   = upperleft;
+	      out_color_down1.data[(r*out_color_down1.cols+c)*3]   = upperleft;
+	      out_color_down1.data[(r*out_color_down1.cols+c)*3+1] = (upperright+lowerleft)/2;
+	      out_color_down1.data[(r*out_color_down1.cols+c)*3+2] = lowerright;
 	      //ES12
 	      out_gray_down.data[(r*out_gray_down.cols+c)] = 0.3*float(lowerright) + 0.59*float(upperright+lowerleft)/2.0 + 0.11*float(upperleft);
 	    }
