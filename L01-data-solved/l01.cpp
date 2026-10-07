@@ -379,8 +379,8 @@ int main(int argc, char **argv)
       if(args.image_name.find("RGGB")!=std::string::npos || args.image_name.find("GBRG")!=std::string::npos || args.image_name.find("BGGR")!=std::string::npos)
       {
 	//due immagini di destinazione per esercizio 11 e 12
+	cv::Mat out_color_down1(image.rows/2,image.cols/2,CV_8UC3);
 	cv::Mat out_gray_down(image.rows/2,image.cols/2,CV_8UC1);
-	cv::Mat out_gray_down2(image.rows/2,image.cols/2,CV_8UC1);
 
 	for(int r=0;r<out_gray_down.rows;++r)
 	{
@@ -400,31 +400,37 @@ int main(int argc, char **argv)
 	    if(args.image_name.find("RGGB")!=std::string::npos)
 	    {
 	      //ES11
-	      out_gray_down.data[(r*out_gray_down.cols+c)]   = (upperright+lowerleft)/2;
+	      out_color_down1.data[(r*out_gray_down.cols+c)]     = upperleft;
+	      out_color_down1.data[(r*out_gray_down.cols+c)+1]   = (upperright+lowerleft)/2;
+	      out_color_down1.data[(r*out_gray_down.cols+c)+2]   = lowerright;
 	      //ES12
-	      out_gray_down2.data[(r*out_gray_down.cols+c)] = 0.3*float(upperleft) + 0.59*float(upperright+lowerleft)/2.0 + 0.11*float(lowerright);
+	      out_gray_down.data[(r*out_gray_down.cols+c)] = 0.3*float(upperleft) + 0.59*float(upperright+lowerleft)/2.0 + 0.11*float(lowerright);
 	    }
 
 	    if(args.image_name.find("GBRG")!=std::string::npos)
 	    {
 	      //ES11
-	      out_gray_down.data[(r*out_gray_down.cols+c)]   = (upperleft+lowerright)/2;
+	      out_color_down1.data[(r*out_gray_down.cols+c)]     = upperright;
+	      out_color_down1.data[(r*out_gray_down.cols+c)+1]   = (upperleft+lowerright)/2;
+	      out_color_down1.data[(r*out_gray_down.cols+c)+2]   = lowerleft;
 	      //ES12
-	      out_gray_down2.data[(r*out_gray_down.cols+c)] = 0.3*float(lowerleft) + 0.59*float(upperleft+lowerright)/2.0 + 0.11*float(upperright);
+	      out_gray_down.data[(r*out_gray_down.cols+c)] = 0.3*float(lowerleft) + 0.59*float(upperleft+lowerright)/2.0 + 0.11*float(upperright);
 	    }
 
 	    if(args.image_name.find("BGGR")!=std::string::npos)
 	    {
 	      //ES11
-	      out_gray_down.data[(r*out_gray_down.cols+c)]   = (upperright+lowerleft)/2;
+	      out_color_down1.data[(r*out_gray_down.cols+c)]     = lowerright;
+	      out_color_down1.data[(r*out_gray_down.cols+c)+1]   = (upperright+lowerleft)/2;
+	      out_color_down1.data[(r*out_gray_down.cols+c)+2]   = upperleft;
 	      //ES12
-	      out_gray_down2.data[(r*out_gray_down.cols+c)] = 0.3*float(lowerright) + 0.59*float(upperright+lowerleft)/2.0 + 0.11*float(upperleft);
+	      out_gray_down.data[(r*out_gray_down.cols+c)] = 0.3*float(lowerright) + 0.59*float(upperright+lowerleft)/2.0 + 0.11*float(upperleft);
 	    }
 	  }
 	}
 
-	openandwait("Downsample debayer", out_gray_down, false);
-	openandwait("Luminance debayer", out_gray_down2, false);
+	openandwait("Downsample debayer", out_color_down1, false);
+	openandwait("Luminance debayer", out_gray_down, false);
 
       //ES13
       //
