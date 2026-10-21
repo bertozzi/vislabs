@@ -130,6 +130,10 @@ int main(int argc, char **argv)
       cv::imshow("Running Average-BG", bg);
       cv::imshow("Running Average", fg);
 
+      //char out_name[256];
+      //sprintf(out_name, "Bin_m1.10_%06d.pbm", frame_number);
+      //cv::imwrite(out_name, fg);
+
     }
     
     m_pframe_bg.push_back(image);
