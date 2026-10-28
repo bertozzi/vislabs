@@ -104,6 +104,7 @@ int main(int argc, char **argv)
     // EDGE DETECTION (data, non reimplementata qui - vedi L05-edges)
     // USARE cv::Canny()
     cv::Mat edges;
+    // INSERIRE QUI CHIAMATA cv::Canny() e visualizzazione
 
     // HOUGH TRANSFORM (il vostro algoritmo, vedi sopra)
     cv::Mat accumulator;
