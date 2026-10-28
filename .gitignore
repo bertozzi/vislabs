@@ -5,3 +5,7 @@ build
 .cproject
 .settings
 
+
+# soluzioni: gestite nel repository privato visplabs (git-dir lab/.git-sol)
+*-solved/
+.git-sol/
