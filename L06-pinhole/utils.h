@@ -14,8 +14,8 @@ struct CameraParams
     int w, h;
 
     // intrinsics
-    float ku, kv;
-    float u0, v0;
+    float ku, kv; // gli alfa e beta nelle slide (assumiamo no skew)
+    float u0, v0; // coordinate centro ottico
 
     // estrinsics
     cv::Affine3f RT; // 4x4 matrix
@@ -54,9 +54,10 @@ void LoadPoints(const std::string& filename, std::vector< cv::Point3f >& points)
 
 
 
-
+// date le rotazioni e le traslazioni genera la matrice 4x4 di rototraslazione
 void PoseToAffine(float rx, float ry, float rz, float tx, float ty, float tz, cv::Affine3f& affine)
 {
+    // rotazione pura attorno X, genero vettore e poi converto in matrice di rotazione usanddo cv::Rodirgues()
     cv::Mat world_RvecX_cam = cv::Mat(1,3,CV_32F);
     world_RvecX_cam.at<float>(0,0) = rx;
     world_RvecX_cam.at<float>(0,1) = 0.0;
@@ -72,6 +73,7 @@ void cv::Rodrigues  (
  )   
 */
     
+    // rotazione pura attorno Y
     cv::Mat world_RvecY_cam = cv::Mat(1,3,CV_32F);
     world_RvecY_cam.at<float>(0,0) = 0.0;
     world_RvecY_cam.at<float>(0,1) = ry;
@@ -88,12 +90,15 @@ void cv::Rodrigues  (
     
     cv::Mat world_R_cam = world_Rx_cam*world_Ry_cam*world_Rz_cam; // Multiplication order is important (it depends on how the rotation is built)
     
-    cv::Mat world_t_cam = cv::Mat(1,3,CV_32F);
+    cv::Mat world_t_cam = cv::Mat(1,3,CV_32F); // logicamente avrebbe senso 3,1 ma va comunque bene per cv::Affine3f() 
     world_t_cam.at<float>(0,0) = tx;
     world_t_cam.at<float>(0,1) = ty;
     world_t_cam.at<float>(0,2) = tz;
     
     affine = cv::Affine3f(world_R_cam, world_t_cam); // constructor, Affine transform. It represents a 4x4 homogeneous transformation matrix [RT]
+    /* [R t]
+       [0 1]
+    */
 }
 
 void LoadCameraParams(const std::string& filename, CameraParams& params)
@@ -113,10 +118,11 @@ void LoadCameraParams(const std::string& filename, CameraParams& params)
     PoseToAffine(rx, ry, rz, tx, ty, tz, params.RT);
 }
 
+// serve per visualizzare i punti per VIZ
 void PointsToMat(const std::vector< cv::Point3f >& points, cv::Mat& mat)
 {
-    mat = cv::Mat(1, 3*points.size(), CV_32FC3);
-    for (unsigned int i,j = 0; i < points.size(); ++i, j+=3)
+    mat = cv::Mat(1, 3*points.size(), CV_32FC3); //XXX check 3*...
+    for (unsigned int i = 0,j = 0; i < points.size(); ++i, j+=3)
     {
         mat.at<float>(j) = points[i].x;
         mat.at<float>(j+1) = points[i].y;
@@ -124,6 +130,7 @@ void PointsToMat(const std::vector< cv::Point3f >& points, cv::Mat& mat)
     }
 }
 
+// disegna i punti sull'immagine (assumendo immagine float)
 void DrawPixels(const std::vector< cv::Point2f >& uv_points, cv::Mat& image)
 {
     for (unsigned int i = 0; i < uv_points.size(); ++i)
