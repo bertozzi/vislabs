@@ -14,3 +14,14 @@ include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 add_executable(mismatch_opencv mismatch_opencv.cpp)
 target_link_libraries( mismatch_opencv ${OpenCV_LIBS} )
+
+# mismatch_eigen e' scritto apposta per NON compilare (vedi commenti nel file):
+# l'incompatibilita' di dimensioni e' rilevata da Eigen a compile-time, non a
+# runtime come per OpenCV. EXCLUDE_FROM_ALL lo tiene fuori da "make"/"make all",
+# cosi' la build di questa cartella non si rompe mai; per vedere l'errore del
+# compilatore basta lanciare "make mismatch_eigen" esplicitamente.
+#
+# Richiede C++14 (non C++11 come il resto dei laboratori): la versione di Eigen
+# installata su questo sistema lo richiede.
+add_executable(mismatch_eigen EXCLUDE_FROM_ALL mismatch_eigen.cpp)
+set_target_properties(mismatch_eigen PROPERTIES CXX_STANDARD 14 CXX_STANDARD_REQUIRED ON)
