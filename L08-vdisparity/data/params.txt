@@ -1,0 +1,3 @@
+# parametri camera stereo (rettificata)
+# f u0 v0 baseline
+700.0 320.0 240.0 0.25
