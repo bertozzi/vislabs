@@ -4,6 +4,9 @@ project(mismatch_examples)
 find_package( OpenCV REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall -g")
+
+
 # Solo l'esempio OpenCV viene compilato: l'errore e' a runtime, quindi il
 # programma deve poter essere costruito normalmente.
 #
@@ -20,8 +23,6 @@ target_link_libraries( mismatch_opencv ${OpenCV_LIBS} )
 # runtime come per OpenCV. EXCLUDE_FROM_ALL lo tiene fuori da "make"/"make all",
 # cosi' la build di questa cartella non si rompe mai; per vedere l'errore del
 # compilatore basta lanciare "make mismatch_eigen" esplicitamente.
-#
-# Richiede C++14 (non C++11 come il resto dei laboratori): la versione di Eigen
-# installata su questo sistema lo richiede.
-add_executable(mismatch_eigen EXCLUDE_FROM_ALL mismatch_eigen.cpp)
+# Richiede C++14 
+add_executable(mismatch_eigen mismatch_eigen.cpp)
 set_target_properties(mismatch_eigen PROPERTIES CXX_STANDARD 14 CXX_STANDARD_REQUIRED ON)
